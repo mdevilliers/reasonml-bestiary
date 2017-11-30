@@ -1,13 +1,15 @@
+open Types;
+
 [%bs.raw {|require('./Board.css')|}];
 
 module Tile = {
   let component = ReasonReact.statelessComponent("Tile");
-  let make = (~tile: Types.tileType, ~reducer, _children) => {
+  let make = (~tile, ~reducer, _children) => {
     ...component,
     render: (_self) =>
       switch tile.state {
-      | Types.On => <div className="tile on" onClick=(reducer((_) => Types.OnClick(tile.key))) />
-      | Types.Off => <div className="tile off" onClick=(reducer((_) => Types.OnClick(tile.key))) />
+      | On => <div className="tile on" onClick=(reducer((_) => OnClick(tile.key))) />
+      | Off => <div className="tile off" onClick=(reducer((_) => OnClick(tile.key))) />
       }
   };
 };

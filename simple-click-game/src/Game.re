@@ -1,26 +1,27 @@
+open Types;
+
 let generateBoard = (size) => {
   let rec helper = (n, acc) =>
     switch n {
     | 0 => acc
     | _ =>
-      let t = Random.bool() ? Types.{key: n, state: Types.On} : Types.{key: n, state: Types.Off};
+      let t = Random.bool() ? {key: n, state: On} : {key: n, state: Off};
       helper(n - 1, [t, ...acc])
     };
   helper(size * size, [])
 };
 
-let newGame = (size) => Types.{tiles: generateBoard(size), rowSize: size};
+let newGame = (size) => {tiles: generateBoard(size), rowSize: size};
 
-let partitionOnKey = (key: int, tiles: list(Types.tileType)) =>
-  List.partition((i: Types.tileType) => i.key == key, tiles);
+let partitionOnKey = (key, tiles) => List.partition((i) => i.key == key, tiles);
 
-let flipState = (tile: Types.tileType) =>
+let flipState = (tile) =>
   switch tile.state {
-  | Types.On => Types.{key: tile.key, state: Types.Off}
-  | Types.Off => Types.{key: tile.key, state: Types.On}
+  | On => {key: tile.key, state: Off}
+  | Off => {key: tile.key, state: On}
   };
 
-let update = (game: Types.game, selected: int) => {
+let update = (game, selected) => {
   let up = {
     let n = selected - game.rowSize;
     n <= 0 ? None : Some(n)
@@ -49,14 +50,14 @@ let update = (game: Types.game, selected: int) => {
      )
   |> List.map((Some(i)) => i)
   |> List.fold_left(
-       (all: list(Types.tileType), i: int) => {
+       (all, i) => {
          let ([one], others) = partitionOnKey(i, all);
          let flipped = flipState(one);
          List.append(others, [flipped])
        },
        game.tiles
      )
-  |> List.sort((a: Types.tileType, b: Types.tileType) => compare(a.key, b.key))
+  |> List.sort((a, b) => compare(a.key, b.key))
 };
 
 let component = ReasonReact.reducerComponent("Game");
@@ -67,7 +68,6 @@ let make = (_children) => {
   reducer: (action, state) =>
     switch action {
     | Types.OnClick(n) =>
-      let _ = Js.log("clicked!" ++ string_of_int(n));
       let tiles = update(state, n);
       ReasonReact.Update({...state, tiles})
     },
