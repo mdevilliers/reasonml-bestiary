@@ -5,11 +5,11 @@
    height: 100px;
 }
 
-.on {
+.red {
     background: red;
 }
 
-.off {
+.green {
     background : green;
 }
 

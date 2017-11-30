@@ -4,12 +4,15 @@ open Types;
 
 module Tile = {
   let component = ReasonReact.statelessComponent("Tile");
-  let make = (~tile, ~reducer, _children) => {
+  let make = (~tile, ~reducer, ~gameState, _children) => {
     ...component,
     render: (_self) =>
-      switch tile.state {
-      | On => <div className="tile on" onClick=(reducer((_) => OnClick(tile.key))) />
-      | Off => <div className="tile off" onClick=(reducer((_) => OnClick(tile.key))) />
+      switch (tile.color, gameState) {
+      | (Red, Running) => <div className="tile red" onClick=(reducer((_) => OnClick(tile.key))) />
+      | (Green, Running) =>
+        <div className="tile green" onClick=(reducer((_) => OnClick(tile.key))) />
+      | (Red, GameOver) => <div className="tile red" />
+      | (Green, GameOver) => <div className="tile green" />
       }
   };
 };
@@ -20,8 +23,9 @@ let make = (~game, ~reducer, _children) => {
   ...component,
   render: (_self) => {
     let rows = Utils.split(game.rowSize, game.tiles);
+    let gameState = game.state;
     let drawCells = (cells) =>
-      List.map((tile) => <Tile tile reducer />, cells)
+      List.map((tile) => <Tile tile reducer gameState />, cells)
       |> Array.of_list
       |> ReasonReact.arrayToElement;
     let drawRows =

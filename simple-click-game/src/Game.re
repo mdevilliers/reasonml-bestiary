@@ -5,20 +5,20 @@ let generateBoard = (size) => {
     switch n {
     | 0 => acc
     | _ =>
-      let t = Random.bool() ? {key: n, state: On} : {key: n, state: Off};
+      let t = Random.bool() ? {key: n, color: Red} : {key: n, color: Green};
       helper(n - 1, [t, ...acc])
     };
   helper(size * size, [])
 };
 
-let newGame = (size) => {tiles: generateBoard(size), rowSize: size, totalMoves: 0};
+let newGame = (size) => {tiles: generateBoard(size), rowSize: size, totalMoves: 0, state: Running};
 
 let partitionOnKey = (key, tiles) => List.partition((i) => i.key == key, tiles);
 
 let flipState = (tile) =>
-  switch tile.state {
-  | On => {key: tile.key, state: Off}
-  | Off => {key: tile.key, state: On}
+  switch tile.color {
+  | Red => {key: tile.key, color: Green}
+  | Green => {key: tile.key, color: Red}
   };
 
 let update = (game, selected) => {
@@ -60,16 +60,23 @@ let update = (game, selected) => {
   |> List.sort((a, b) => compare(a.key, b.key))
 };
 
+let isGameOver = (tiles) => {
+  let outcome =
+    List.for_all((t) => t.color == Red, tiles) || List.for_all((t) => t.color == Green, tiles);
+  outcome ? GameOver : Running
+};
+
 let component = ReasonReact.reducerComponent("Game");
 
 let make = (_children) => {
   ...component,
-  initialState: () => newGame(5),
+  initialState: () => newGame(3),
   reducer: (action, state) =>
     switch action {
     | OnClick(n) =>
       let tiles = update(state, n);
-      ReasonReact.Update({...state, tiles, totalMoves: state.totalMoves + 1})
+      let gameState = isGameOver(tiles);
+      ReasonReact.Update({...state, tiles, totalMoves: state.totalMoves + 1, state: gameState})
     | RestartGame => ReasonReact.Update(newGame(state.rowSize))
     },
   render: (self) =>

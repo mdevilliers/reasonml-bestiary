@@ -1,16 +1,21 @@
-type state =
-  | On
-  | Off;
+type tileColor =
+  | Red
+  | Green;
 
 type tile = {
   key: int,
-  state
+  color: tileColor
 };
+
+type gameState =
+  | Running
+  | GameOver;
 
 type game = {
   tiles: list(tile),
   rowSize: int,
-  totalMoves: int
+  totalMoves: int,
+  state: gameState
 };
 
 type action =
