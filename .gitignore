@@ -13,7 +13,7 @@
 /lib
 /types
 .merlin
-.bs.js
+*.bs.js
 
 # misc
 .DS_Store
