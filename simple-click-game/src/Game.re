@@ -11,7 +11,7 @@ let generateBoard = (size) => {
   helper(size * size, [])
 };
 
-let newGame = (size) => {tiles: generateBoard(size), rowSize: size};
+let newGame = (size) => {tiles: generateBoard(size), rowSize: size, totalMoves: 0};
 
 let partitionOnKey = (key, tiles) => List.partition((i) => i.key == key, tiles);
 
@@ -67,9 +67,14 @@ let make = (_children) => {
   initialState: () => newGame(5),
   reducer: (action, state) =>
     switch action {
-    | Types.OnClick(n) =>
+    | OnClick(n) =>
       let tiles = update(state, n);
-      ReasonReact.Update({...state, tiles})
+      ReasonReact.Update({...state, tiles, totalMoves: state.totalMoves + 1})
+    | RestartGame => ReasonReact.Update(newGame(state.rowSize))
     },
-  render: (self) => <Board game=self.state reducer=self.reduce />
+  render: (self) =>
+    <div>
+      <Control game=self.state reducer=self.reduce />
+      <Board game=self.state reducer=self.reduce />
+    </div>
 };

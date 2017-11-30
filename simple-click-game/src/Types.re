@@ -2,15 +2,17 @@ type state =
   | On
   | Off;
 
-type tileType = {
+type tile = {
   key: int,
   state
 };
 
 type game = {
-  tiles: list(tileType),
-  rowSize: int
+  tiles: list(tile),
+  rowSize: int,
+  totalMoves: int
 };
 
 type action =
-  | OnClick(int);
+  | OnClick(int)
+  | RestartGame;

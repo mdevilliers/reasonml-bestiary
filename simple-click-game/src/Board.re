@@ -16,7 +16,7 @@ module Tile = {
 
 let component = ReasonReact.statelessComponent("Board");
 
-let make = (~game: Types.game, ~reducer, _children) => {
+let make = (~game, ~reducer, _children) => {
   ...component,
   render: (_self) => {
     let rows = Utils.split(game.rowSize, game.tiles);
