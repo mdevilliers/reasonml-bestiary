@@ -1,0 +1,15 @@
+
+.tile {
+   display : inline-block;
+   width: 100px;
+   height: 100px;
+}
+
+.on {
+    background: red;
+}
+
+.off {
+    background : green;
+}
+
